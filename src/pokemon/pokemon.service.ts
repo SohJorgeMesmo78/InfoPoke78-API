@@ -5,15 +5,28 @@ import { PrismaService } from '../prisma/prisma.service';
 export class PokemonService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll() {
-    return this.prisma.pokemon.findMany();
+  async getAll(page: number, limit: number, nome?: string) {
+    const skip = (page - 1) * limit;
+
+    return this.prisma.pokemon.findMany({
+      where: nome
+        ? {
+            nome: {
+              contains: nome,
+              mode: 'insensitive',
+            },
+          }
+        : {},
+      skip,
+      take: limit,
+    });
   }
 
-  async getById(id: number) {
-    return this.prisma.pokemon.findUnique({ where: { id } });
-  }
+  async getById(identifier: string) {
+    const isNumeric = !isNaN(Number(identifier));
 
-  async create(name: string) {
-    return this.prisma.pokemon.create({ data: { name } });
+    return this.prisma.pokemon.findFirst({
+      where: isNumeric ? { id: Number(identifier) } : { nome: identifier },
+    });
   }
 }
