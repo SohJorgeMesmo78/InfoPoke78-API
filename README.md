@@ -26,3 +26,14 @@
 ### Instale as dependências  
 ```bash
 npm install
+```
+
+## Manter contato
+
+- Autor - [Jorge Fernando Alves Pereira](https://www.linkedin.com/in/sohjorgemesmo78/)
+- Website - [JFPereira](https://jf-pereira.vercel.app/)
+
+## Licença
+
+Este projeto está licenciado sob a licença [MIT](https://opensource.org/licenses/MIT). A PokeAPI utilizada neste projeto também está licenciada sob a [Licença MIT](https://opensource.org/licenses/MIT).
+
