@@ -1,38 +1,22 @@
 import { PrismaClient } from '@prisma/client';
-import axios from 'axios';
+import { seedPokemons } from './seeds/pokemon.seed';
+import { seedTipos } from './seeds/tipo.seed';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Buscando dados da PokéAPI...');
+  console.log('🌱 Iniciando Seed do Banco de Dados...');
+  
+  await seedTipos();
+  await seedPokemons();
 
-  try {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=151');//Alterar para pegar todos depois 100000
-
-    for (const pokemon of response.data.results) {
-      const detalhes = await axios.get(pokemon.url);
-
-      await prisma.pokemon.upsert({
-        where: { nome: pokemon.name },
-        update: {},
-        create: {
-          nome: pokemon.name,
-          peso: detalhes.data.weight / 10,
-          altura: detalhes.data.height / 10,
-          experiencia: detalhes.data.base_experience,
-          inicial: detalhes.data.is_default,
-        },
-      });
-
-      console.log(`Inserido: ${pokemon.name}`);
-    }
-
-    console.log('Seed finalizada com sucesso! 🚀');
-  } catch (error) {
-    console.error('Erro ao buscar dados da PokéAPI:', error);
-  } finally {
-    await prisma.$disconnect();
-  }
+  console.log('🌱 Seed Finalizada!');
 }
 
-main();
+main()
+  .catch((error) => {
+    console.error('Erro na Seed:', error);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
