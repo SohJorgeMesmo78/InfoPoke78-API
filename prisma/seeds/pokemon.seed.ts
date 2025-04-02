@@ -51,7 +51,7 @@ export async function seedPokemons() {
       console.log(`Inserido: ${pokemon.name}`);
     }
 
-    console.log('Seed de Pokémon finalizada! 🚀');
+    console.log('Seed de Pokémon finalizada! 👾');
   } catch (error) {
     console.error('Erro ao buscar Pokémon:', error);
   }

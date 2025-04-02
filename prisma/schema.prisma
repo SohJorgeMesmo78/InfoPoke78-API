@@ -31,7 +31,13 @@ model PokemonTipo {
   pokemon Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
   tipo    Tipo    @relation(fields: [tipoId], references: [id], onDelete: Cascade)
 
-  @@id([pokemonId, tipoId]) // Chave primária composta
+  @@id([pokemonId, tipoId])
 }
+
+model Jogo {
+  id   Int    @id @default(autoincrement())
+  nome String @unique
+}
+
 
 
