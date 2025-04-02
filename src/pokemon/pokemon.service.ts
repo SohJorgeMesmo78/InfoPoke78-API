@@ -5,31 +5,40 @@ import { PrismaService } from '../prisma/prisma.service';
 export class PokemonService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll(page: number, limit: number, nome?: string) {
+  async getAll(page: number, limit: number, nome?: string, tipos?: string) {
     const skip = (page - 1) * limit;
   
-    const total = await this.prisma.pokemon.count({
-      where: nome
-        ? {
-            nome: {
-              contains: nome,
-              mode: 'insensitive',
-            },
-          }
-        : {},
-    });
+    // Convertendo os tipos em um array, se fornecido
+    const tiposArray = tipos ? tipos.split(',').map((t) => t.trim().toLowerCase()) : [];
   
+    const whereCondition: any = {
+      ...(nome && {
+        nome: {
+          contains: nome,
+          mode: 'insensitive',
+        },
+      }),
+      ...(tiposArray.length > 0 && {
+        AND: tiposArray.map((tipo) => ({
+          tipos: {
+            some: {
+              tipo: {
+                nome: {
+                  equals: tipo,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          },
+        })),
+      }),
+    };
+  
+    const total = await this.prisma.pokemon.count({ where: whereCondition });
     const totalPages = Math.ceil(total / limit);
   
     const pokemons = await this.prisma.pokemon.findMany({
-      where: nome
-        ? {
-            nome: {
-              contains: nome,
-              mode: 'insensitive',
-            },
-          }
-        : {},
+      where: whereCondition,
       skip,
       take: limit,
       include: {
@@ -76,7 +85,5 @@ export class PokemonService {
         },
       },
     });
-  }
-  
-  
+  }  
 }
