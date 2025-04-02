@@ -7,21 +7,24 @@ async function main() {
   console.log('Buscando dados da PokéAPI...');
 
   try {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000');
+    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=151');//Alterar para pegar todos depois 100000
 
-    const pokemons = response.data.results.map((pokemon: any, index: number) => ({
-      id: index + 1,
-      nome: pokemon.name,
-    }));
+    for (const pokemon of response.data.results) {
+      const detalhes = await axios.get(pokemon.url);
 
-    console.log('Inserindo Pokémon no banco de dados...');
-
-    for (const pokemon of pokemons) {
       await prisma.pokemon.upsert({
-        where: { id: pokemon.id },
+        where: { nome: pokemon.name },
         update: {},
-        create: pokemon,
+        create: {
+          nome: pokemon.name,
+          peso: detalhes.data.weight / 10,
+          altura: detalhes.data.height / 10,
+          experiencia: detalhes.data.base_experience,
+          inicial: detalhes.data.is_default,
+        },
       });
+
+      console.log(`Inserido: ${pokemon.name}`);
     }
 
     console.log('Seed finalizada com sucesso! 🚀');
