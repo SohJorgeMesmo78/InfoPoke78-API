@@ -7,12 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Tipo {
-  id   Int    @id @default(autoincrement())
-  nome String @unique
-}
-
-
 model Pokemon {
   id           Int     @id @default(autoincrement())
   nome         String  @unique
@@ -20,7 +14,24 @@ model Pokemon {
   altura       Float   @default(0.0)
   experiencia  Int     @default(0)
   inicial      Boolean @default(false)
+  tipos        PokemonTipo[]
 }
 
+model Tipo {
+  id   Int    @id @default(autoincrement())
+  nome String @unique
+  pokemons PokemonTipo[]
+}
+
+model PokemonTipo {
+  pokemonId Int
+  tipoId    Int
+  slot      Int
+
+  pokemon Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
+  tipo    Tipo    @relation(fields: [tipoId], references: [id], onDelete: Cascade)
+
+  @@id([pokemonId, tipoId]) // Chave primária composta
+}
 
 

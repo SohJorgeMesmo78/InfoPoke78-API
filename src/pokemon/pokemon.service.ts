@@ -7,8 +7,21 @@ export class PokemonService {
 
   async getAll(page: number, limit: number, nome?: string) {
     const skip = (page - 1) * limit;
-
-    return this.prisma.pokemon.findMany({
+  
+    const total = await this.prisma.pokemon.count({
+      where: nome
+        ? {
+            nome: {
+              contains: nome,
+              mode: 'insensitive',
+            },
+          }
+        : {},
+    });
+  
+    const totalPages = Math.ceil(total / limit);
+  
+    const pokemons = await this.prisma.pokemon.findMany({
       where: nome
         ? {
             nome: {
@@ -19,14 +32,51 @@ export class PokemonService {
         : {},
       skip,
       take: limit,
+      include: {
+        tipos: {
+          select: {
+            slot: true,
+            tipo: {
+              select: {
+                nome: true,
+              },
+            },
+          },
+          orderBy: { slot: 'asc' },
+        },
+      },
     });
+  
+    return {
+      total,
+      page,
+      totalPages,
+      limit,
+      data: pokemons,
+    };
   }
+  
 
   async getById(identifier: string) {
     const isNumeric = !isNaN(Number(identifier));
-
+  
     return this.prisma.pokemon.findFirst({
       where: isNumeric ? { id: Number(identifier) } : { nome: identifier },
+      include: {
+        tipos: {
+          select: {
+            slot: true,
+            tipo: {
+              select: {
+                nome: true,
+              },
+            },
+          },
+          orderBy: { slot: 'asc' },
+        },
+      },
     });
   }
+  
+  
 }
