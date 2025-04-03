@@ -3,31 +3,21 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PokemonService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async getAll(page: number, limit: number, nome?: string, tipos?: string) {
     const skip = (page - 1) * limit;
-  
-    // Convertendo os tipos em um array, se fornecido
     const tiposArray = tipos ? tipos.split(',').map((t) => t.trim().toLowerCase()) : [];
   
     const whereCondition: any = {
       ...(nome && {
-        nome: {
-          contains: nome,
-          mode: 'insensitive',
-        },
+        nome: { contains: nome, mode: 'insensitive' },
       }),
       ...(tiposArray.length > 0 && {
         AND: tiposArray.map((tipo) => ({
           tipos: {
             some: {
-              tipo: {
-                nome: {
-                  equals: tipo,
-                  mode: 'insensitive',
-                },
-              },
+              tipo: { nome: { equals: tipo, mode: 'insensitive' } },
             },
           },
         })),
@@ -45,13 +35,14 @@ export class PokemonService {
         tipos: {
           select: {
             slot: true,
-            tipo: {
-              select: {
-                nome: true,
-              },
-            },
+            tipo: { select: { nome: true } },
           },
           orderBy: { slot: 'asc' },
+        },
+        jogos: {
+          select: {
+            jogo: { select: { nome: true } },
+          },
         },
       },
     });
@@ -61,29 +52,40 @@ export class PokemonService {
       page,
       totalPages,
       limit,
-      data: pokemons,
+      data: pokemons.map((p) => ({
+        ...p,
+        jogos: p.jogos.map((j) => j.jogo.nome),
+      })),
     };
   }
   
-
   async getById(identifier: string) {
     const isNumeric = !isNaN(Number(identifier));
   
-    return this.prisma.pokemon.findFirst({
+    const pokemon = await this.prisma.pokemon.findFirst({
       where: isNumeric ? { id: Number(identifier) } : { nome: identifier },
       include: {
         tipos: {
           select: {
             slot: true,
-            tipo: {
-              select: {
-                nome: true,
-              },
-            },
+            tipo: { select: { nome: true } },
           },
           orderBy: { slot: 'asc' },
         },
+        jogos: {
+          select: {
+            jogo: { select: { nome: true } },
+          },
+        },
       },
     });
-  }  
+  
+    return pokemon
+      ? {
+          ...pokemon,
+          jogos: pokemon.jogos.map((j) => j.jogo.nome),
+        }
+      : null;
+  }
+  
 }

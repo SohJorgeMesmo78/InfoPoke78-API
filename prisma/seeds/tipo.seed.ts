@@ -4,7 +4,7 @@ import axios from 'axios';
 const prisma = new PrismaClient();
 
 export async function seedTipos() {
-  console.log('Buscando tipos da PokéAPI...');
+  console.log('🔥 Buscando tipos da PokéAPI...');
 
   try {
     const response = await axios.get('https://pokeapi.co/api/v2/type');
@@ -24,7 +24,7 @@ export async function seedTipos() {
       console.log(`Inserido: ${tipo.nome}`);
     }
 
-    console.log('Seed de Tipos finalizada! 🚀');
+    console.log('🔥✅ Seed de Tipos finalizada! 🎉');
   } catch (error) {
     console.error('Erro ao buscar Tipos:', error);
   }
