@@ -9,12 +9,11 @@ export async function seedPokemon() {
   console.log('🦖 Buscando dados dos Pokémon da PokéAPI...');
 
   try {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=11');
+    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=251');
 
     for (const pokemon of response.data.results) {
       const detalhes = await axios.get(pokemon.url);
 
-      // Criando o Pokémon
       const novoPokemon = await prisma.pokemon.upsert({
         where: { nome: pokemon.name },
         update: {},
@@ -29,7 +28,6 @@ export async function seedPokemon() {
 
       console.log(`✅ Inserido: ${pokemon.name}`);
 
-      // Chamando as seeds auxiliares para associar Tipos e Jogos
       await seedPokemonTipos(novoPokemon.id, pokemon.name);
       await seedPokemonJogos(novoPokemon.id, pokemon.name);
     }

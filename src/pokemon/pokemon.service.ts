@@ -3,12 +3,23 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PokemonService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
-  async getAll(page: number, limit: number, nome?: string, tipos?: string) {
-    const skip = (page - 1) * limit;
+  private getPokemonImages(id: number) {
+    return {
+      padrao: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+      costas: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`,
+      shiny: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`,
+      shinyCostas: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/${id}.png`,
+      oficial: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+      dreamWorld: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${id}.svg`,
+    };
+  }
+
+  async getAll(pagina: number, limite: number, nome?: string, tipos?: string) {
+    const skip = (pagina - 1) * limite;
     const tiposArray = tipos ? tipos.split(',').map((t) => t.trim().toLowerCase()) : [];
-  
+
     const whereCondition: any = {
       ...(nome && {
         nome: { contains: nome, mode: 'insensitive' },
@@ -23,14 +34,14 @@ export class PokemonService {
         })),
       }),
     };
-  
+
     const total = await this.prisma.pokemon.count({ where: whereCondition });
-    const totalPages = Math.ceil(total / limit);
-  
+    const totalPaginas = Math.ceil(total / limite);
+
     const pokemons = await this.prisma.pokemon.findMany({
       where: whereCondition,
       skip,
-      take: limit,
+      take: limite,
       include: {
         tipos: {
           select: {
@@ -46,22 +57,27 @@ export class PokemonService {
         },
       },
     });
-  
+
     return {
       total,
-      page,
-      totalPages,
-      limit,
+      pagina,
+      totalPaginas,
+      limite,
       data: pokemons.map((p) => ({
         ...p,
         jogos: p.jogos.map((j) => j.jogo.nome),
+        imagens: this.getPokemonImages(p.id),
+        tipos: p.tipos.map((t) => ({
+          slot: t.slot,
+          nome: t.tipo.nome,
+        })),
       })),
     };
   }
-  
+
   async getById(identifier: string) {
     const isNumeric = !isNaN(Number(identifier));
-  
+
     const pokemon = await this.prisma.pokemon.findFirst({
       where: isNumeric ? { id: Number(identifier) } : { nome: identifier },
       include: {
@@ -79,13 +95,13 @@ export class PokemonService {
         },
       },
     });
-  
+
     return pokemon
       ? {
           ...pokemon,
           jogos: pokemon.jogos.map((j) => j.jogo.nome),
+          imagens: this.getPokemonImages(pokemon.id),
         }
       : null;
   }
-  
 }

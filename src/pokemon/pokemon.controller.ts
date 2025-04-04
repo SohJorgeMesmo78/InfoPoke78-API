@@ -7,12 +7,12 @@ export class PokemonController {
 
   @Get()
   async getAll(
-    @Query('page') page = '1',
-    @Query('limit') limit = '10',
+    @Query('pagina') pagina = '1',
+    @Query('limite') limite = '10',
     @Query('nome') nome?: string,
     @Query('tipo') tipo?: string,
   ) {
-    return this.pokemonService.getAll(Number(page), Number(limit), nome, tipo);
+    return this.pokemonService.getAll(Number(pagina), Number(limite), nome, tipo);
   }
   
   @Get(':identifier')
