@@ -7,7 +7,13 @@ export class JogoService {
 
   async getAll() {
     return this.prisma.jogo.findMany({
-      orderBy: { nome: 'asc' },
+      include: {
+        versao: {
+          select: {
+            nome: true,
+          },
+        },
+      },
     });
   }  
 }

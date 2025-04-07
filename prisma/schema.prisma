@@ -36,9 +36,11 @@ model PokemonTipo {
 }
 
 model Jogo {
-  id       Int           @id @default(autoincrement())
-  nome     String        @unique
-  pokemons PokemonJogo[]
+  id        Int     @id @default(autoincrement())
+  nome      String  @unique
+  versaoId  Int?
+  versao    Versao? @relation(fields: [versaoId], references: [id])
+  pokemons  PokemonJogo[]
 }
 
 model PokemonJogo {
@@ -47,5 +49,11 @@ model PokemonJogo {
   pokemon   Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
   jogo      Jogo    @relation(fields: [jogoId], references: [id], onDelete: Cascade)
 
-  @@id([pokemonId, jogoId]) // Chave primária composta
+  @@id([pokemonId, jogoId])
+}
+
+model Versao {
+  id     Int     @id @default(autoincrement())
+  nome   String  @unique
+  jogos  Jogo[]
 }

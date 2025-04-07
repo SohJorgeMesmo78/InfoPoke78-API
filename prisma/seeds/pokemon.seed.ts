@@ -9,7 +9,7 @@ export async function seedPokemon() {
   console.log('🦖 Buscando dados dos Pokémon da PokéAPI...');
 
   try {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=251');
+    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=151');
 
     for (const pokemon of response.data.results) {
       const detalhes = await axios.get(pokemon.url);
