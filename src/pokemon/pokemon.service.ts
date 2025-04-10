@@ -77,14 +77,46 @@ export class PokemonService {
 
   async getById(identifier: string) {
     const isNumeric = !isNaN(Number(identifier));
-
+  
     const pokemon = await this.prisma.pokemon.findFirst({
       where: isNumeric ? { id: Number(identifier) } : { nome: identifier },
       include: {
         tipos: {
           select: {
             slot: true,
-            tipo: { select: { nome: true } },
+            tipo: {
+              select: {
+                nome: true,
+                vantagensComoAtacante: {
+                  select: {
+                    tipoDefensor: {
+                      select: {
+                        id: true,
+                        nome: true,
+                      },
+                    },
+                    multiplicador: true,
+                  },
+                  orderBy: {
+                    tipoDefensor: { id: 'asc' }, // Ordenar por ID do tipo defensor
+                  },
+                },
+                vantagensComoDefensor: {
+                  select: {
+                    tipoAtacante: {
+                      select: {
+                        id: true,
+                        nome: true,
+                      },
+                    },
+                    multiplicador: true,
+                  },
+                  orderBy: {
+                    tipoAtacante: { id: 'asc' }, // Ordenar por ID do tipo atacante
+                  },
+                },
+              },
+            },
           },
           orderBy: { slot: 'asc' },
         },
@@ -95,13 +127,20 @@ export class PokemonService {
         },
       },
     });
-
+  
     return pokemon
       ? {
           ...pokemon,
           jogos: pokemon.jogos.map((j) => j.jogo.nome),
           imagens: this.getPokemonImages(pokemon.id),
+          tipos: pokemon.tipos.map((pokemonTipo) => ({
+            ...pokemonTipo.tipo,
+            vantagensComoAtacante: pokemonTipo.tipo.vantagensComoAtacante,
+            vantagensComoDefensor: pokemonTipo.tipo.vantagensComoDefensor,
+          })),
         }
       : null;
   }
+  
+  
 }
