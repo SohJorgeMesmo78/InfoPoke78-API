@@ -87,20 +87,6 @@ export class PokemonService {
             tipo: {
               select: {
                 nome: true,
-                vantagensComoAtacante: {
-                  select: {
-                    tipoDefensor: {
-                      select: {
-                        id: true,
-                        nome: true,
-                      },
-                    },
-                    multiplicador: true,
-                  },
-                  orderBy: {
-                    tipoDefensor: { id: 'asc' }, // Ordenar por ID do tipo defensor
-                  },
-                },
                 vantagensComoDefensor: {
                   select: {
                     tipoAtacante: {
@@ -112,7 +98,7 @@ export class PokemonService {
                     multiplicador: true,
                   },
                   orderBy: {
-                    tipoAtacante: { id: 'asc' }, // Ordenar por ID do tipo atacante
+                    tipoAtacante: { id: 'asc' },
                   },
                 },
               },
@@ -135,12 +121,10 @@ export class PokemonService {
           imagens: this.getPokemonImages(pokemon.id),
           tipos: pokemon.tipos.map((pokemonTipo) => ({
             ...pokemonTipo.tipo,
-            vantagensComoAtacante: pokemonTipo.tipo.vantagensComoAtacante,
             vantagensComoDefensor: pokemonTipo.tipo.vantagensComoDefensor,
           })),
         }
       : null;
   }
-  
   
 }
