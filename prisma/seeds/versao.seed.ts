@@ -21,7 +21,7 @@ export async function seedVersoes() {
         console.log(`Versão inserida: ${versao.name}`);
       }
   
-      console.log('✅ Seed de Versões finalizada!');
+      console.log('Seed de Versões finalizada! ✅');
     } catch (error) {
       console.error('Erro ao buscar Versões:', error);
     }

@@ -19,10 +19,26 @@ model Pokemon {
 }
 
 model Tipo {
-  id       Int           @id @default(autoincrement())
-  nome     String        @unique
+  id       Int         @id @default(autoincrement())
+  nome     String      @unique
   pokemons PokemonTipo[]
+
+  vantagensComoAtacante Vantagem[] @relation("TipoAtacante")
+  vantagensComoDefensor Vantagem[] @relation("TipoDefensor")
 }
+
+
+model Vantagem {
+  tipoAtacanteId Int
+  tipoDefensorId Int
+  multiplicador  Float
+
+  tipoAtacante Tipo @relation("TipoAtacante", fields: [tipoAtacanteId], references: [id])
+  tipoDefensor Tipo @relation("TipoDefensor", fields: [tipoDefensorId], references: [id])
+
+  @@id([tipoAtacanteId, tipoDefensorId])
+}
+
 
 model PokemonTipo {
   pokemonId Int
