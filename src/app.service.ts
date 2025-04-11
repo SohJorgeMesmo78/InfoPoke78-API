@@ -19,7 +19,7 @@ export class AppService {
             --texto: #EAEAEA;
             --texto2: #B0B0B0;
           }
-
+  
           body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--fundo);
@@ -27,27 +27,27 @@ export class AppService {
             margin: 0;
             padding: 24px;
           }
-
+  
           h1 {
             color: var(--primaria);
             font-size: 2rem;
           }
-
+  
           h2 {
             color: var(--secundaria);
             margin-top: 2rem;
             font-size: 1.5rem;
           }
-
+  
           section {
             margin-bottom: 24px;
           }
-
+  
           ul {
             list-style-type: none;
             padding: 0;
           }
-
+  
           li {
             background-color: var(--fundo2);
             margin: 6px 0;
@@ -55,20 +55,20 @@ export class AppService {
             border-radius: 8px;
             color: var(--texto2);
           }
-
+  
           li strong {
             color: var(--texto);
           }
-
+  
           a {
             color: var(--secundaria);
             text-decoration: none;
           }
-
+  
           a:hover {
             text-decoration: underline;
           }
-
+  
           em {
             color: var(--texto2);
           }
@@ -77,18 +77,19 @@ export class AppService {
       <body>
         <h1>Bem-vindo à InfoPoke78-API!</h1>
         <p>Esta API fornece informações detalhadas sobre Pokémon, utilizando dados da <a href="https://pokeapi.co/" target="_blank">PokeAPI</a>.</p>
-
+  
         <section>
           <h2>Endpoints Disponíveis</h2>
           <ul>
             <li>
               <strong>GET /pokemon</strong><br>
-              Retorna uma lista de Pokémon com paginação e filtros opcionais por nome.<br>
+              Retorna uma lista de Pokémon com paginação e filtros opcionais por nome e tipos.<br>
               <em>Parâmetros:</em>
               <ul>
                 <li><strong>page</strong> (number): Número da página para paginação.</li>
                 <li><strong>limit</strong> (number): Quantidade de resultados por página.</li>
                 <li><strong>nome</strong> (string): Filtra Pokémon pelo nome.</li>
+                <li><strong>tipos</strong> (string): Filtra Pokémon pelos tipos (separados por vírgula).</li>
               </ul>
             </li>
             <li>
@@ -109,7 +110,7 @@ export class AppService {
             </li>
           </ul>
         </section>
-
+  
         <section>
           <h2>Documentação</h2>
           <p>Para mais informações, visite o repositório no GitHub: <a href="https://github.com/SohJorgeMesmo78/InfoPoke78-API" target="_blank">InfoPoke78-API</a></p>
@@ -118,4 +119,5 @@ export class AppService {
       </html>
     `;
   }
+  
 }
