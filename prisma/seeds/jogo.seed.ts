@@ -29,7 +29,7 @@ export async function seedJogos() {
       console.log(`Jogo inserido: ${jogo.name} (versão: ${versaoName})`);
     }
 
-    console.log('🎮✅ Seed de Jogos finalizada!');
+    console.log('Seed de Jogos finalizada! ✅');
   } catch (error) {
     console.error('Erro ao buscar Jogos:', error);
   }

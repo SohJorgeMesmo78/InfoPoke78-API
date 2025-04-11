@@ -24,7 +24,7 @@ export async function seedTipos() {
       console.log(`Inserido: ${tipo.nome}`);
     }
 
-    console.log('🔥✅ Seed de Tipos finalizada! 🎉');
+    console.log('Seed de Tipos finalizada! ✅');
   } catch (error) {
     console.error('Erro ao buscar Tipos:', error);
   }

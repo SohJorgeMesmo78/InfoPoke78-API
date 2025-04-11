@@ -4,7 +4,7 @@ import axios from 'axios';
 const prisma = new PrismaClient();
 
 export async function seedPokemonTipos(pokemonId: number, pokemonNome: string) {
-  console.log(`🦖🔥 Associando tipos ao Pokémon: ${pokemonNome}`);
+  console.log(`🔥 Associando tipos ao Pokémon: ${pokemonNome}`);
 
   try {
     const detalhes = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonNome}`);
@@ -27,7 +27,7 @@ export async function seedPokemonTipos(pokemonId: number, pokemonNome: string) {
       skipDuplicates: true,
     });
 
-    console.log(`🦖🔥✅ Tipos associados a: ${pokemonNome}`);
+    console.log(`Tipos associados a: ${pokemonNome} ✅`);
   } catch (error) {
     console.error(`❌ Erro ao associar tipos ao Pokémon ${pokemonNome}:`, error);
   }

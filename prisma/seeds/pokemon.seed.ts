@@ -26,13 +26,13 @@ export async function seedPokemon() {
         },
       });
 
-      console.log(`✅ Inserido: ${pokemon.name}`);
+      console.log(`✅ Inserido: ${pokemon.name}, ${pokemon.id}`);
 
       await seedPokemonTipos(novoPokemon.id, pokemon.name);
       await seedPokemonJogos(novoPokemon.id, pokemon.name);
     }
 
-    console.log('🦖✅ Seed de Pokémon finalizada! 🎉');
+    console.log(' Seed de Pokémon finalizada! ✅');
   } catch (error) {
     console.error('❌ Erro ao buscar Pokémon:', error);
   } finally {
