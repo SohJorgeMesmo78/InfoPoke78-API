@@ -116,18 +116,18 @@ export class PokemonService {
   
     if (!pokemon) return null;
   
-    const tiposComVantagens = pokemon.tipos.map((t) => t.tipo);
+    const tiposComDetalhes = pokemon.tipos.map((t) => t.tipo);
   
-    let vantagens = tiposComVantagens[0]?.vantagensComoDefensor || [];
+    let vantagens = tiposComDetalhes[0]?.vantagensComoDefensor || [];
   
-    if (tiposComVantagens.length > 1) {
+    if (tiposComDetalhes.length > 1) {
       vantagens = await this.combinarVantagens(
-        tiposComVantagens[0].vantagensComoDefensor,
-        tiposComVantagens[1].vantagensComoDefensor
+        tiposComDetalhes[0].vantagensComoDefensor,
+        tiposComDetalhes[1].vantagensComoDefensor
       );
     }
   
-    const tipos = tiposComVantagens.map((tipo) => ({
+    const tipos = tiposComDetalhes.map((tipo) => ({
       nome: tipo.nome,
     }));
   
