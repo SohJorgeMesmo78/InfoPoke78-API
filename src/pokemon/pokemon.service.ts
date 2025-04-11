@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PokemonService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   private getPokemonImages(id: number) {
     return {
@@ -114,17 +114,52 @@ export class PokemonService {
       },
     });
   
-    return pokemon
-      ? {
-          ...pokemon,
-          jogos: pokemon.jogos.map((j) => j.jogo.nome),
-          imagens: this.getPokemonImages(pokemon.id),
-          tipos: pokemon.tipos.map((pokemonTipo) => ({
-            ...pokemonTipo.tipo,
-            vantagensComoDefensor: pokemonTipo.tipo.vantagensComoDefensor,
-          })),
-        }
-      : null;
+    if (!pokemon) return null;
+  
+    const tiposComVantagens = pokemon.tipos.map((t) => t.tipo);
+  
+    let vantagens = tiposComVantagens[0]?.vantagensComoDefensor || [];
+  
+    if (tiposComVantagens.length > 1) {
+      vantagens = await this.combinarVantagens(
+        tiposComVantagens[0].vantagensComoDefensor,
+        tiposComVantagens[1].vantagensComoDefensor
+      );
+    }
+  
+    const tipos = tiposComVantagens.map((tipo) => ({
+      nome: tipo.nome,
+    }));
+  
+    return {
+      ...pokemon,
+      jogos: pokemon.jogos.map((j) => j.jogo.nome),
+      imagens: this.getPokemonImages(pokemon.id),
+      tipos,
+      vantagens,
+    };
   }
   
+
+
+  async combinarVantagens(
+    lista1: any[],
+    lista2: any[]
+  ) {
+    const mapaLista2 = new Map<number, any>();
+    for (const v of lista2) {
+      mapaLista2.set(v.tipoAtacante.id, v);
+    }
+
+    return lista1.map((v1) => {
+      const v2 = mapaLista2.get(v1.tipoAtacante.id);
+      const multiplicador = v2 ? v1.multiplicador * v2.multiplicador : v1.multiplicador;
+
+      return {
+        tipoAtacante: v1.tipoAtacante,
+        multiplicador: multiplicador,
+      };
+    });
+  }
+
 }
